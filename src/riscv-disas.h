@@ -516,5 +516,6 @@ typedef struct {
 size_t inst_length(rv_inst inst);
 void inst_fetch(const uint8_t *data, rv_inst *instp, size_t *length);
 void disasm_inst(char *buf, size_t buflen, rv_isa isa, uint64_t pc, rv_inst inst);
+void disasm_inst_rec(char* buf, size_t buflen, rv_isa isa, uint64_t pc, rv_inst inst, uint64_t *immPC);
 
 #endif

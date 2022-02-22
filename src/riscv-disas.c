@@ -1,3 +1,7 @@
+#if defined(_MSC_VER)
+#include <BaseTsd.h>
+typedef SSIZE_T ssize_t;
+#endif
 /*
  * RISC-V Disassembler
  *
@@ -64,41 +68,41 @@ static const char rv_freg_name_sym[32][5] = {
 
 /* instruction formats */
 
-static const char rv_fmt_none[]                   = "O\t";
-static const char rv_fmt_rs1[]                    = "O\t1";
-static const char rv_fmt_offset[]                 = "O\to";
-static const char rv_fmt_pred_succ[]              = "O\tp,s";
-static const char rv_fmt_rs1_rs2[]                = "O\t1,2";
-static const char rv_fmt_rd_imm[]                 = "O\t0,i";
-static const char rv_fmt_rd_offset[]              = "O\t0,o";
-static const char rv_fmt_rd_rs1_rs2[]             = "O\t0,1,2";
-static const char rv_fmt_frd_rs1[]                = "O\t3,1";
-static const char rv_fmt_rd_frs1[]                = "O\t0,4";
-static const char rv_fmt_rd_frs1_frs2[]           = "O\t0,4,5";
-static const char rv_fmt_frd_frs1_frs2[]          = "O\t3,4,5";
-static const char rv_fmt_rm_frd_frs1[]            = "O\tr,3,4";
-static const char rv_fmt_rm_frd_rs1[]             = "O\tr,3,1";
-static const char rv_fmt_rm_rd_frs1[]             = "O\tr,0,4";
-static const char rv_fmt_rm_frd_frs1_frs2[]       = "O\tr,3,4,5";
-static const char rv_fmt_rm_frd_frs1_frs2_frs3[]  = "O\tr,3,4,5,6";
-static const char rv_fmt_rd_rs1_imm[]             = "O\t0,1,i";
-static const char rv_fmt_rd_rs1_offset[]          = "O\t0,1,i";
-static const char rv_fmt_rd_offset_rs1[]          = "O\t0,i(1)";
-static const char rv_fmt_frd_offset_rs1[]         = "O\t3,i(1)";
-static const char rv_fmt_rd_csr_rs1[]             = "O\t0,c,1";
-static const char rv_fmt_rd_csr_zimm[]            = "O\t0,c,7";
-static const char rv_fmt_rs2_offset_rs1[]         = "O\t2,i(1)";
-static const char rv_fmt_frs2_offset_rs1[]        = "O\t5,i(1)";
-static const char rv_fmt_rs1_rs2_offset[]         = "O\t1,2,o";
-static const char rv_fmt_rs2_rs1_offset[]         = "O\t2,1,o";
-static const char rv_fmt_aqrl_rd_rs2_rs1[]        = "OAR\t0,2,(1)";
-static const char rv_fmt_aqrl_rd_rs1[]            = "OAR\t0,(1)";
-static const char rv_fmt_rd[]                     = "O\t0";
-static const char rv_fmt_rd_zimm[]                = "O\t0,7";
-static const char rv_fmt_rd_rs1[]                 = "O\t0,1";
-static const char rv_fmt_rd_rs2[]                 = "O\t0,2";
-static const char rv_fmt_rs1_offset[]             = "O\t1,o";
-static const char rv_fmt_rs2_offset[]             = "O\t2,o";
+static const char rv_fmt_none[]                   = "O ";
+static const char rv_fmt_rs1[]                    = "O 1";
+static const char rv_fmt_offset[]                 = "O o";
+static const char rv_fmt_pred_succ[]              = "O p, s";
+static const char rv_fmt_rs1_rs2[]                = "O 1, 2";
+static const char rv_fmt_rd_imm[]                 = "O 0, i";
+static const char rv_fmt_rd_offset[]              = "O 0, o";
+static const char rv_fmt_rd_rs1_rs2[]             = "O 0, 1, 2";
+static const char rv_fmt_frd_rs1[]                = "O 3, 1";
+static const char rv_fmt_rd_frs1[]                = "O 0, 4";
+static const char rv_fmt_rd_frs1_frs2[]           = "O 0, 4, 5";
+static const char rv_fmt_frd_frs1_frs2[]          = "O 3, 4, 5";
+static const char rv_fmt_rm_frd_frs1[]            = "O r, 3, 4";
+static const char rv_fmt_rm_frd_rs1[]             = "O r, 3, 1";
+static const char rv_fmt_rm_rd_frs1[]             = "O r, 0, 4";
+static const char rv_fmt_rm_frd_frs1_frs2[]       = "O r, 3, 4, 5";
+static const char rv_fmt_rm_frd_frs1_frs2_frs3[]  = "O r, 3, 4, 5, 6";
+static const char rv_fmt_rd_rs1_imm[]             = "O 0, 1, i";
+static const char rv_fmt_rd_rs1_offset[]          = "O 0, 1, i";
+static const char rv_fmt_rd_offset_rs1[]          = "O 0, [1+]";
+static const char rv_fmt_frd_rs1_offset[]         = "O 3, [1+]";
+static const char rv_fmt_rd_csr_rs1[]             = "O 0, c, 1";
+static const char rv_fmt_rd_csr_zimm[]            = "O 0, c, 7";
+static const char rv_fmt_rs1_offset_rs2[]         = "O [1+], 2";
+static const char rv_fmt_rs1_offset_frs2[]        = "O [1+], 5";
+static const char rv_fmt_rs1_rs2_offset[]         = "O 1, 2, o";
+static const char rv_fmt_rs2_rs1_offset[]         = "O 2, 1, o";
+static const char rv_fmt_aqrl_rd_rs2_rs1[]        = "OAR 0, 2, (1)";
+static const char rv_fmt_aqrl_rd_rs1[]            = "OAR 0, (1)";
+static const char rv_fmt_rd[]                     = "O 0";
+static const char rv_fmt_rd_zimm[]                = "O 0, 7";
+static const char rv_fmt_rd_rs1[]                 = "O 0, 1";
+static const char rv_fmt_rd_rs2[]                 = "O 0, 2";
+static const char rv_fmt_rs1_offset[]             = "O 1, o";
+static const char rv_fmt_rs2_offset[]             = "O 2, o";
 
 /* pseudo-instruction constraints */
 
@@ -311,9 +315,9 @@ const rv_opcode_data opcode_data[] = {
     { "lw", rv_codec_i, rv_fmt_rd_offset_rs1, NULL, 0, 0, 0 },
     { "lbu", rv_codec_i, rv_fmt_rd_offset_rs1, NULL, 0, 0, 0 },
     { "lhu", rv_codec_i, rv_fmt_rd_offset_rs1, NULL, 0, 0, 0 },
-    { "sb", rv_codec_s, rv_fmt_rs2_offset_rs1, NULL, 0, 0, 0 },
-    { "sh", rv_codec_s, rv_fmt_rs2_offset_rs1, NULL, 0, 0, 0 },
-    { "sw", rv_codec_s, rv_fmt_rs2_offset_rs1, NULL, 0, 0, 0 },
+    { "sb", rv_codec_s, rv_fmt_rs1_offset_rs2, NULL, 0, 0, 0 },
+    { "sh", rv_codec_s, rv_fmt_rs1_offset_rs2, NULL, 0, 0, 0 },
+    { "sw", rv_codec_s, rv_fmt_rs1_offset_rs2, NULL, 0, 0, 0 },
     { "addi", rv_codec_i, rv_fmt_rd_rs1_imm, rvcp_addi, 0, 0, 0 },
     { "slti", rv_codec_i, rv_fmt_rd_rs1_imm, NULL, 0, 0, 0 },
     { "sltiu", rv_codec_i, rv_fmt_rd_rs1_imm, rvcp_sltiu, 0, 0, 0 },
@@ -337,7 +341,7 @@ const rv_opcode_data opcode_data[] = {
     { "fence.i", rv_codec_none, rv_fmt_none, NULL, 0, 0, 0 },
     { "lwu", rv_codec_i, rv_fmt_rd_offset_rs1, NULL, 0, 0, 0 },
     { "ld", rv_codec_i, rv_fmt_rd_offset_rs1, NULL, 0, 0, 0 },
-    { "sd", rv_codec_s, rv_fmt_rs2_offset_rs1, NULL, 0, 0, 0 },
+    { "sd", rv_codec_s, rv_fmt_rs1_offset_rs2, NULL, 0, 0, 0 },
     { "addiw", rv_codec_i, rv_fmt_rd_rs1_imm, rvcp_addiw, 0, 0, 0 },
     { "slliw", rv_codec_i_sh5, rv_fmt_rd_rs1_imm, NULL, 0, 0, 0 },
     { "srliw", rv_codec_i_sh5, rv_fmt_rd_rs1_imm, NULL, 0, 0, 0 },
@@ -349,7 +353,7 @@ const rv_opcode_data opcode_data[] = {
     { "sraw", rv_codec_r, rv_fmt_rd_rs1_rs2, NULL, 0, 0, 0 },
     { "ldu", rv_codec_i, rv_fmt_rd_offset_rs1, NULL, 0, 0, 0 },
     { "lq", rv_codec_i, rv_fmt_rd_offset_rs1, NULL, 0, 0, 0 },
-    { "sq", rv_codec_s, rv_fmt_rs2_offset_rs1, NULL, 0, 0, 0 },
+    { "sq", rv_codec_s, rv_fmt_rs1_offset_rs2, NULL, 0, 0, 0 },
     { "addid", rv_codec_i, rv_fmt_rd_rs1_imm, NULL, 0, 0, 0 },
     { "sllid", rv_codec_i_sh6, rv_fmt_rd_rs1_imm, NULL, 0, 0, 0 },
     { "srlid", rv_codec_i_sh6, rv_fmt_rd_rs1_imm, NULL, 0, 0, 0 },
@@ -426,8 +430,8 @@ const rv_opcode_data opcode_data[] = {
     { "csrrwi", rv_codec_i_csr, rv_fmt_rd_csr_zimm, rvcp_csrrwi, 0, 0, 0 },
     { "csrrsi", rv_codec_i_csr, rv_fmt_rd_csr_zimm, NULL, 0, 0, 0 },
     { "csrrci", rv_codec_i_csr, rv_fmt_rd_csr_zimm, NULL, 0, 0, 0 },
-    { "flw", rv_codec_i, rv_fmt_frd_offset_rs1, NULL, 0, 0, 0 },
-    { "fsw", rv_codec_s, rv_fmt_frs2_offset_rs1, NULL, 0, 0, 0 },
+    { "flw", rv_codec_i, rv_fmt_frd_rs1_offset, NULL, 0, 0, 0 },
+    { "fsw", rv_codec_s, rv_fmt_rs1_offset_frs2, NULL, 0, 0, 0 },
     { "fmadd.s", rv_codec_r4_m, rv_fmt_rm_frd_frs1_frs2_frs3, NULL, 0, 0, 0 },
     { "fmsub.s", rv_codec_r4_m, rv_fmt_rm_frd_frs1_frs2_frs3, NULL, 0, 0, 0 },
     { "fnmsub.s", rv_codec_r4_m, rv_fmt_rm_frd_frs1_frs2_frs3, NULL, 0, 0, 0 },
@@ -456,8 +460,8 @@ const rv_opcode_data opcode_data[] = {
     { "fcvt.lu.s", rv_codec_r_m, rv_fmt_rm_rd_frs1, NULL, 0, 0, 0 },
     { "fcvt.s.l", rv_codec_r_m, rv_fmt_rm_frd_rs1, NULL, 0, 0, 0 },
     { "fcvt.s.lu", rv_codec_r_m, rv_fmt_rm_frd_rs1, NULL, 0, 0, 0 },
-    { "fld", rv_codec_i, rv_fmt_frd_offset_rs1, NULL, 0, 0, 0 },
-    { "fsd", rv_codec_s, rv_fmt_frs2_offset_rs1, NULL, 0, 0, 0 },
+    { "fld", rv_codec_i, rv_fmt_frd_rs1_offset, NULL, 0, 0, 0 },
+    { "fsd", rv_codec_s, rv_fmt_rs1_offset_frs2, NULL, 0, 0, 0 },
     { "fmadd.d", rv_codec_r4_m, rv_fmt_rm_frd_frs1_frs2_frs3, NULL, 0, 0, 0 },
     { "fmsub.d", rv_codec_r4_m, rv_fmt_rm_frd_frs1_frs2_frs3, NULL, 0, 0, 0 },
     { "fnmsub.d", rv_codec_r4_m, rv_fmt_rm_frd_frs1_frs2_frs3, NULL, 0, 0, 0 },
@@ -488,8 +492,8 @@ const rv_opcode_data opcode_data[] = {
     { "fcvt.d.l", rv_codec_r_m, rv_fmt_rm_frd_rs1, NULL, 0, 0, 0 },
     { "fcvt.d.lu", rv_codec_r_m, rv_fmt_rm_frd_rs1, NULL, 0, 0, 0 },
     { "fmv.d.x", rv_codec_r, rv_fmt_frd_rs1, NULL, 0, 0, 0 },
-    { "flq", rv_codec_i, rv_fmt_frd_offset_rs1, NULL, 0, 0, 0 },
-    { "fsq", rv_codec_s, rv_fmt_frs2_offset_rs1, NULL, 0, 0, 0 },
+    { "flq", rv_codec_i, rv_fmt_frd_rs1_offset, NULL, 0, 0, 0 },
+    { "fsq", rv_codec_s, rv_fmt_rs1_offset_frs2, NULL, 0, 0, 0 },
     { "fmadd.q", rv_codec_r4_m, rv_fmt_rm_frd_frs1_frs2_frs3, NULL, 0, 0, 0 },
     { "fmsub.q", rv_codec_r4_m, rv_fmt_rm_frd_frs1_frs2_frs3, NULL, 0, 0, 0 },
     { "fnmsub.q", rv_codec_r4_m, rv_fmt_rm_frd_frs1_frs2_frs3, NULL, 0, 0, 0 },
@@ -523,12 +527,12 @@ const rv_opcode_data opcode_data[] = {
     { "fmv.x.q", rv_codec_r, rv_fmt_rd_frs1, NULL, 0, 0, 0 },
     { "fmv.q.x", rv_codec_r, rv_fmt_frd_rs1, NULL, 0, 0, 0 },
     { "c.addi4spn", rv_codec_ciw_4spn, rv_fmt_rd_rs1_imm, NULL, rv_op_addi, rv_op_addi, rv_op_addi, rvcd_imm_nz },
-    { "c.fld", rv_codec_cl_ld, rv_fmt_frd_offset_rs1, NULL, rv_op_fld, rv_op_fld, 0 },
+    { "c.fld", rv_codec_cl_ld, rv_fmt_frd_rs1_offset, NULL, rv_op_fld, rv_op_fld, 0 },
     { "c.lw", rv_codec_cl_lw, rv_fmt_rd_offset_rs1, NULL, rv_op_lw, rv_op_lw, rv_op_lw },
-    { "c.flw", rv_codec_cl_lw, rv_fmt_frd_offset_rs1, NULL, rv_op_flw, 0, 0 },
-    { "c.fsd", rv_codec_cs_sd, rv_fmt_frs2_offset_rs1, NULL, rv_op_fsd, rv_op_fsd, 0 },
-    { "c.sw", rv_codec_cs_sw, rv_fmt_rs2_offset_rs1, NULL, rv_op_sw, rv_op_sw, rv_op_sw },
-    { "c.fsw", rv_codec_cs_sw, rv_fmt_frs2_offset_rs1, NULL, rv_op_fsw, 0, 0 },
+    { "c.flw", rv_codec_cl_lw, rv_fmt_frd_rs1_offset, NULL, rv_op_flw, 0, 0 },
+    { "c.fsd", rv_codec_cs_sd, rv_fmt_rs1_offset_frs2, NULL, rv_op_fsd, rv_op_fsd, 0 },
+    { "c.sw", rv_codec_cs_sw, rv_fmt_rs1_offset_rs2, NULL, rv_op_sw, rv_op_sw, rv_op_sw },
+    { "c.fsw", rv_codec_cs_sw, rv_fmt_rs1_offset_frs2, NULL, rv_op_fsw, 0, 0 },
     { "c.nop", rv_codec_ci_none, rv_fmt_none, NULL, rv_op_addi, rv_op_addi, rv_op_addi },
     { "c.addi", rv_codec_ci, rv_fmt_rd_rs1_imm, NULL, rv_op_addi, rv_op_addi, rv_op_addi, rvcd_imm_nz_hint },
     { "c.jal", rv_codec_cj_jal, rv_fmt_rd_offset, NULL, rv_op_jal, 0, 0 },
@@ -548,26 +552,26 @@ const rv_opcode_data opcode_data[] = {
     { "c.beqz", rv_codec_cb, rv_fmt_rs1_rs2_offset, NULL, rv_op_beq, rv_op_beq, rv_op_beq },
     { "c.bnez", rv_codec_cb, rv_fmt_rs1_rs2_offset, NULL, rv_op_bne, rv_op_bne, rv_op_bne },
     { "c.slli", rv_codec_ci_sh6, rv_fmt_rd_rs1_imm, NULL, rv_op_slli, rv_op_slli, rv_op_slli, rvcd_imm_nz },
-    { "c.fldsp", rv_codec_ci_ldsp, rv_fmt_frd_offset_rs1, NULL, rv_op_fld, rv_op_fld, rv_op_fld },
+    { "c.fldsp", rv_codec_ci_ldsp, rv_fmt_frd_rs1_offset, NULL, rv_op_fld, rv_op_fld, rv_op_fld },
     { "c.lwsp", rv_codec_ci_lwsp, rv_fmt_rd_offset_rs1, NULL, rv_op_lw, rv_op_lw, rv_op_lw },
-    { "c.flwsp", rv_codec_ci_lwsp, rv_fmt_frd_offset_rs1, NULL, rv_op_flw, 0, 0 },
+    { "c.flwsp", rv_codec_ci_lwsp, rv_fmt_frd_rs1_offset, NULL, rv_op_flw, 0, 0 },
     { "c.jr", rv_codec_cr_jr, rv_fmt_rd_rs1_offset, NULL, rv_op_jalr, rv_op_jalr, rv_op_jalr },
     { "c.mv", rv_codec_cr_mv, rv_fmt_rd_rs1_rs2, NULL, rv_op_addi, rv_op_addi, rv_op_addi },
     { "c.ebreak", rv_codec_ci_none, rv_fmt_none, NULL, rv_op_ebreak, rv_op_ebreak, rv_op_ebreak },
     { "c.jalr", rv_codec_cr_jalr, rv_fmt_rd_rs1_offset, NULL, rv_op_jalr, rv_op_jalr, rv_op_jalr },
     { "c.add", rv_codec_cr, rv_fmt_rd_rs1_rs2, NULL, rv_op_add, rv_op_add, rv_op_add },
-    { "c.fsdsp", rv_codec_css_sdsp, rv_fmt_frs2_offset_rs1, NULL, rv_op_fsd, rv_op_fsd, rv_op_fsd },
-    { "c.swsp", rv_codec_css_swsp, rv_fmt_rs2_offset_rs1, NULL, rv_op_sw, rv_op_sw, rv_op_sw },
-    { "c.fswsp", rv_codec_css_swsp, rv_fmt_frs2_offset_rs1, NULL, rv_op_fsw, 0, 0 },
+    { "c.fsdsp", rv_codec_css_sdsp, rv_fmt_rs1_offset_frs2, NULL, rv_op_fsd, rv_op_fsd, rv_op_fsd },
+    { "c.swsp", rv_codec_css_swsp, rv_fmt_rs1_offset_rs2, NULL, rv_op_sw, rv_op_sw, rv_op_sw },
+    { "c.fswsp", rv_codec_css_swsp, rv_fmt_rs1_offset_frs2, NULL, rv_op_fsw, 0, 0 },
     { "c.ld", rv_codec_cl_ld, rv_fmt_rd_offset_rs1, NULL, 0, rv_op_ld, rv_op_ld },
-    { "c.sd", rv_codec_cs_sd, rv_fmt_rs2_offset_rs1, NULL, 0, rv_op_sd, rv_op_sd },
+    { "c.sd", rv_codec_cs_sd, rv_fmt_rs1_offset_rs2, NULL, 0, rv_op_sd, rv_op_sd },
     { "c.addiw", rv_codec_ci, rv_fmt_rd_rs1_imm, NULL, 0, rv_op_addiw, rv_op_addiw },
     { "c.ldsp", rv_codec_ci_ldsp, rv_fmt_rd_offset_rs1, NULL, 0, rv_op_ld, rv_op_ld },
-    { "c.sdsp", rv_codec_css_sdsp, rv_fmt_rs2_offset_rs1, NULL, 0, rv_op_sd, rv_op_sd },
+    { "c.sdsp", rv_codec_css_sdsp, rv_fmt_rs1_offset_rs2, NULL, 0, rv_op_sd, rv_op_sd },
     { "c.lq", rv_codec_cl_lq, rv_fmt_rd_offset_rs1, NULL, 0, 0, rv_op_lq },
-    { "c.sq", rv_codec_cs_sq, rv_fmt_rs2_offset_rs1, NULL, 0, 0, rv_op_sq },
+    { "c.sq", rv_codec_cs_sq, rv_fmt_rs1_offset_rs2, NULL, 0, 0, rv_op_sq },
     { "c.lqsp", rv_codec_ci_lqsp, rv_fmt_rd_offset_rs1, NULL, 0, 0, rv_op_lq },
-    { "c.sqsp", rv_codec_css_sqsp, rv_fmt_rs2_offset_rs1, NULL, 0, 0, rv_op_sq },
+    { "c.sqsp", rv_codec_css_sqsp, rv_fmt_rs1_offset_rs2, NULL, 0, 0, rv_op_sq },
     { "nop", rv_codec_i, rv_fmt_none, NULL, 0, 0, 0 },
     { "mv", rv_codec_i, rv_fmt_rd_rs1, NULL, 0, 0, 0 },
     { "not", rv_codec_i, rv_fmt_rd_rs1, NULL, 0, 0, 0 },
@@ -2070,7 +2074,7 @@ static void append(char *s1, const char *s2, ssize_t n)
 #define INST_FMT_6 "%012" PRIx64 "      "
 #define INST_FMT_8 "%016" PRIx64 "  "
 
-static void decode_inst_format(char *buf, size_t buflen, size_t tab, rv_decode *dec)
+static void decode_inst_format(char *buf, size_t buflen, size_t tab, rv_decode *dec, uint64_t *immPC)
 {
     char tmp[64];
     const char *fmt;
@@ -2096,6 +2100,12 @@ static void decode_inst_format(char *buf, size_t buflen, size_t tab, rv_decode *
         switch (*fmt) {
         case 'O':
             append(buf, opcode_data[dec->op].name, buflen);
+            break;
+        case '[':
+            append(buf, "[", buflen);
+            break;
+        case ']':
+            append(buf, "]", buflen);
             break;
         case '(':
             append(buf, "(", buflen);
@@ -2135,6 +2145,17 @@ static void decode_inst_format(char *buf, size_t buflen, size_t tab, rv_decode *
             snprintf(tmp, sizeof(tmp), "%d", dec->imm);
             append(buf, tmp, buflen);
             break;
+        case '+':
+            if (dec->imm >= 0)
+            {
+                snprintf(tmp, sizeof(tmp), "+0x%x", dec->imm);
+            }
+            else
+            {
+                snprintf(tmp, sizeof(tmp), "-0x%x", dec->imm * -1);
+            }
+            append(buf, tmp, buflen);
+            break;
         case 'o':
             snprintf(tmp, sizeof(tmp), "%d", dec->imm);
             append(buf, tmp, buflen);
@@ -2143,6 +2164,7 @@ static void decode_inst_format(char *buf, size_t buflen, size_t tab, rv_decode *
             }
             snprintf(tmp, sizeof(tmp), "# 0x%" PRIx64,
                 dec->pc + dec->imm);
+            *immPC = dec->pc + dec->imm;
             append(buf, tmp, buflen);
             break;
         case 'c': {
@@ -2213,6 +2235,9 @@ static void decode_inst_format(char *buf, size_t buflen, size_t tab, rv_decode *
                 append(buf, " ", buflen);
             }
             break;
+        case ' ':
+            append(buf, " ", buflen);
+            break;
         case 'A':
             if (dec->aq) {
                 append(buf, ".aq", buflen);
@@ -2265,12 +2290,18 @@ void inst_fetch(const uint8_t *data, rv_inst *instp, size_t *length)
 
 /* disassemble instruction */
 
-void disasm_inst(char *buf, size_t buflen, rv_isa isa, uint64_t pc, rv_inst inst)
+void disasm_inst(char* buf, size_t buflen, rv_isa isa, uint64_t pc, rv_inst inst)
+{
+    uint64_t immPC = 0;
+    disasm_inst_rec(buf, buflen, isa, pc, inst, &immPC);
+}
+
+void disasm_inst_rec(char *buf, size_t buflen, rv_isa isa, uint64_t pc, rv_inst inst, uint64_t *immPC)
 {
     rv_decode dec = { .pc = pc, .inst = inst };
     decode_inst_opcode(&dec, isa);
     decode_inst_operands(&dec);
     decode_inst_decompress(&dec, isa);
     decode_inst_lift_pseudo(&dec);
-    decode_inst_format(buf, buflen, 32, &dec);
+    decode_inst_format(buf, buflen, 32, &dec, immPC);
 }
